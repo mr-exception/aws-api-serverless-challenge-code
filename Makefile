@@ -1,7 +1,7 @@
 .PHONY: build clean deploy
 
 build:
-	env GOOS=linux go build -ldflags="-s -w" -o bin/devices devices/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/devices devices/*
 
 clean:
 	rm -rf ./bin
