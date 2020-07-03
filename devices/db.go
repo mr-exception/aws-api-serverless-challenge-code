@@ -21,11 +21,13 @@ type Device struct {
 
 // storeDevice writes a new device in table
 func storeDevice(device Device) (Device, error) {
+	// starts a new session to work with database
 	sess := session.Must(session.NewSession())
 	svc := dynamodb.New(sess)
 
+	// maps the input device object into a dynamodb object
 	deviceItem, err := dynamodbattribute.MarshalMap(device)
-	if err != nil {
+	if err != nil { // in case mapping failed
 		fmt.Println("Got error marshalling map:")
 		fmt.Println(err.Error())
 		return device, err
@@ -46,30 +48,33 @@ func retriveDevice(id string) (Device, error) {
 	svc := dynamodb.New(sess)
 	device := Device{}
 
-	// Perform the query
+	// perform the query to get the requested device by id
 	fmt.Println("Trying to read from table: ", "devices")
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String("devices"),
 		Key: map[string]*dynamodb.AttributeValue{
-			"id": {
+			"id": { // query parameter for db -> just id
 				S: aws.String(id),
 			},
 		},
 	})
+	// in case that query failed
 	if err != nil {
 		fmt.Println(err.Error())
 		return device, err
 	}
+	// in case if device not found
 	if _, ok := result.Item["id"]; !ok {
 		return device, errors.New("notFound")
 	}
-	// Unmarshall the result in to an Device
+	// unmarshall the result in to a Device object
 	err = dynamodbattribute.UnmarshalMap(result.Item, &device)
+
+	// in case of mapping error
 	if err != nil {
 		fmt.Println(err.Error())
 		return device, err
 	}
-
 	return device, nil
 
 }

@@ -10,6 +10,10 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+// createDevice function saves a device in the database in exchange for receiving the desired inputs
+// if the id device has already been saved. Edits its information.
+// @param request Request
+// @return Response, error
 func createDevice(request Request) (Response, error) {
 	var body = request.Body
 	var inputs = Device{}
@@ -56,41 +60,55 @@ func createDevice(request Request) (Response, error) {
 		return Response{Body: string(result), StatusCode: 400}, nil
 	}
 
+	// now data is validated and ready to store in database
 	device, error := storeDevice(inputs)
 
-	if error != nil {
+	if error != nil { // in case of unexpected errors
 		return Response{Body: error.Error(), StatusCode: 500}, error
 	}
-
+	// convert created device into json string
 	result, error := json.Marshal(device)
-
 	if error != nil {
 		return Response{Body: error.Error(), StatusCode: 500}, error
 	}
+
 	return Response{Body: string(result), StatusCode: 201}, nil
 }
 
+// getDevice function retrives a device by passed id parameter in request url
+// @param request Request
+// @return Response, error
 func getDevice(request Request) (Response, error) {
+	// gets id from request parameters
 	var id = request.PathParameters["id"]
 
-	device, err := retriveDevice(id)
+	if id == "" {
+		errorResponse := ErrorResponse{
+			Message: fmt.Sprintf("requested endpoint not found"),
+		}
+		result, _ := json.Marshal(errorResponse)
+		return Response{Body: string(result), StatusCode: 404}, nil
+	}
 
+	// retrives device from database
+	device, err := retriveDevice(id)
 	if err != nil {
-		if err.Error() == "notFound" {
+		if err.Error() == "notFound" { // when device id not found
 			errorResponse := ErrorResponse{
 				Message: fmt.Sprintf("device with id %s not found", id),
 			}
 			result, _ := json.Marshal(errorResponse)
 			return Response{Body: string(result), StatusCode: 404}, nil
 		}
-		return Response{Body: string(err.Error()), StatusCode: 500}, nil
+		return Response{Body: string(err.Error()), StatusCode: 500}, nil // other unexpected errors
 
 	}
 
+	// convert retrived device to json
 	result, err := json.Marshal(device)
-
 	if err != nil {
 		return Response{Body: err.Error(), StatusCode: 500}, nil
 	}
+
 	return Response{Body: string(result), StatusCode: 201}, nil
 }
