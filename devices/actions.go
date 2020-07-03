@@ -15,6 +15,47 @@ func createDevice(request Request) (Response, error) {
 	var inputs = Device{}
 	json.Unmarshal([]byte(body), &inputs)
 
+	// validate the request data
+	if inputs.ID == "" { // validation of id
+		errorResponse := ErrorResponse{
+			Message: "device should have a valid id",
+		}
+		result, _ := json.Marshal(errorResponse)
+		return Response{Body: string(result), StatusCode: 400}, nil
+	}
+
+	if inputs.DeviceModel == "" { // validation of device model
+		errorResponse := ErrorResponse{
+			Message: "device should have a valid device model",
+		}
+		result, _ := json.Marshal(errorResponse)
+		return Response{Body: string(result), StatusCode: 400}, nil
+	}
+
+	if inputs.Model == "" { // validation of model
+		errorResponse := ErrorResponse{
+			Message: "device should have a valid model",
+		}
+		result, _ := json.Marshal(errorResponse)
+		return Response{Body: string(result), StatusCode: 400}, nil
+	}
+
+	if inputs.Name == "" { // validation of name
+		errorResponse := ErrorResponse{
+			Message: "device should have a valid name",
+		}
+		result, _ := json.Marshal(errorResponse)
+		return Response{Body: string(result), StatusCode: 400}, nil
+	}
+
+	if inputs.Serial == "" { // validation of serial
+		errorResponse := ErrorResponse{
+			Message: "device should have a valid serial",
+		}
+		result, _ := json.Marshal(errorResponse)
+		return Response{Body: string(result), StatusCode: 400}, nil
+	}
+
 	device, error := storeDevice(inputs)
 
 	if error != nil {
@@ -41,9 +82,9 @@ func getDevice(request Request) (Response, error) {
 			}
 			result, _ := json.Marshal(errorResponse)
 			return Response{Body: string(result), StatusCode: 404}, nil
-		} else {
-			return Response{Body: string(err.Error()), StatusCode: 500}, nil
 		}
+		return Response{Body: string(err.Error()), StatusCode: 500}, nil
+
 	}
 
 	result, err := json.Marshal(device)
