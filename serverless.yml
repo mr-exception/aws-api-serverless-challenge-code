@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: my-service
+service: Devices
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -19,31 +19,15 @@ service: my-service
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
-frameworkVersion: '>=1.28.0 <2.0.0'
+frameworkVersion: ">=1.28.0 <2.0.0"
 
 provider:
   name: aws
   runtime: go1.x
 
 # you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+stage: dev
+region: us-east-1
 
 # you can define service wide environment variables here
 #  environment:
@@ -56,17 +40,14 @@ package:
     - ./bin/**
 
 functions:
-  hello:
-    handler: bin/hello
+  devices:
+    handler: bin/devices
     events:
       - http:
-          path: hello
-          method: get
-  world:
-    handler: bin/world
-    events:
+          path: api/devices
+          method: post
       - http:
-          path: world
+          path: api/devices/{id}
           method: get
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
