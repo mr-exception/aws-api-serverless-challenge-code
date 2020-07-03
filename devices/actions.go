@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+// ErrorResponse struct: contains a resposne with error message
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
+
 func createDevice(request Request) (Response, error) {
 	var body = request.Body
 	var inputs = Device{}

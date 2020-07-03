@@ -19,11 +19,6 @@ type Device struct {
 	Serial      string `json:"serial"`
 }
 
-// ErrorResponse struct: contains a resposne with error message
-type ErrorResponse struct {
-	Message string `json:"message"`
-}
-
 // storeDevice writes a new device in table
 func storeDevice(device Device) (Device, error) {
 	sess := session.Must(session.NewSession())
