@@ -19,12 +19,12 @@ type ErrorResponse struct {
 // @return Response, error
 func createDevice(request Request) (Response, error) {
 	// define validation rules
-	var validationRules []Rule
-	validationRules[0] = Rule{Field: "id", Message: "device should have valid id", Pattern: "exists"}
-	validationRules[1] = Rule{Field: "deviceModel", Message: "device should have valid device model", Pattern: "exists"}
-	validationRules[2] = Rule{Field: "model", Message: "device should have valid model", Pattern: "exists"}
-	validationRules[3] = Rule{Field: "name", Message: "device should have valid name", Pattern: "exists"}
-	validationRules[4] = Rule{Field: "serial", Message: "device should have valid serial", Pattern: "exists"}
+	var validationRules = make([]Rule, 1)
+	validationRules = append(validationRules, Rule{Field: "id", Message: "device should have valid id", Pattern: "exists"})
+	validationRules = append(validationRules, Rule{Field: "deviceModel", Message: "device should have valid device model", Pattern: "exists"})
+	validationRules = append(validationRules, Rule{Field: "model", Message: "device should have valid model", Pattern: "exists"})
+	validationRules = append(validationRules, Rule{Field: "name", Message: "device should have valid name", Pattern: "exists"})
+	validationRules = append(validationRules, Rule{Field: "serial", Message: "device should have valid serial", Pattern: "exists"})
 
 	// execute the validation
 	var success, response = validateRequest(request, validationRules)
@@ -36,8 +36,11 @@ func createDevice(request Request) (Response, error) {
 	var body = request.Body
 	var inputs = Device{}
 	json.Unmarshal([]byte(body), &inputs)
+
 	// now data is validated and ready to store in database
-	device, error := storeDevice(inputs)
+	sess := session.Must(session.NewSession())
+	svc := dynamodb.New(sess)
+	device, error := storeDevice(svc, inputs)
 
 	if error != nil { // in case of unexpected errors
 		return Response{Body: error.Error(), StatusCode: 500}, error

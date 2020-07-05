@@ -13,6 +13,8 @@ This project is a simple rest api service in go language that uses aws lambda fu
 1. check serverless configuration for aws credentials
 2. go to project root directory and exec `sls deploy`
 
+> please checkout the test section before deployment
+
 
 ## how to test
 

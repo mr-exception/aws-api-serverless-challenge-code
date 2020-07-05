@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
@@ -21,10 +20,7 @@ type Device struct {
 }
 
 // storeDevice writes a new device in table
-func storeDevice(device Device) (Device, error) {
-	// starts a new session to work with database
-	sess := session.Must(session.NewSession())
-	svc := dynamodb.New(sess)
+func storeDevice(svc dynamodbiface.DynamoDBAPI, device Device) (Device, error) {
 
 	// maps the input device object into a dynamodb object
 	deviceItem, err := dynamodbattribute.MarshalMap(device)
