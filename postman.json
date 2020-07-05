@@ -1,0 +1,450 @@
+{
+	"info": {
+		"_postman_id": "ea7b190f-088b-4b28-a357-bd45b4255280",
+		"name": "sample-device-aws",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "store failed 0",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f720f5c-c08b-4137-8ff8-05e2b7f4ba24",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"device should have valid id\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "store failed 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f720f5c-c08b-4137-8ff8-05e2b7f4ba24",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"device should have valid device model\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"valid-id\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "store failed 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dae617d9-4326-490c-b2f4-26ffba7736bd",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"device should have valid model\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"valid-id\",\n    \"deviceModel\": \"valid-device-model\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "store failed 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dbd50c32-9b6e-4ab6-b003-9d1f9b54a627",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"device should have valid name\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"valid-id\",\n    \"deviceModel\": \"valid-device-model\",\n    \"model\": \"valid-model\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "store failed 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "562fc952-aed0-416b-8b4d-0172d46b8ec6",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"device should have valid serial\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"valid-id\",\n    \"deviceModel\": \"valid-device-model\",\n    \"model\": \"valid-model\",\n    \"name\": \"valid-name\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "store failed 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8e694478-2502-42d3-96f8-00c94d54d3ae",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"device should have valid device model\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"valid-id\",\n    \"model\": \"valid-model\",\n    \"name\": \"valid-name\",\n    \"serial\": \"some-serial\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "store success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1f6c0515-f8bc-43b3-b73d-301e5e313247",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"object response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(\"valid-id\");",
+							"    pm.expect(jsonData.deviceModel).to.eql(\"valid-device-model\");",
+							"    pm.expect(jsonData.name).to.eql(\"valid-name\");",
+							"    pm.expect(jsonData.serial).to.eql(\"some-serial\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"valid-id\",\n    \"model\": \"valid-model\",\n    \"deviceModel\": \"valid-device-model\",\n    \"name\": \"valid-name\",\n    \"serial\": \"some-serial\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get not found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fbd12924-89d4-40db-a407-0e04c6c3a23f",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"object response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"device with id te not found\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices/te",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices",
+						"te"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9bd8e167-663b-48ff-adad-8687c3a32916",
+						"exec": [
+							"pm.test(\"status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"object response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(\"valid-id\");",
+							"    pm.expect(jsonData.deviceModel).to.eql(\"valid-device-model\");",
+							"    pm.expect(jsonData.name).to.eql(\"valid-name\");",
+							"    pm.expect(jsonData.serial).to.eql(\"some-serial\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://otbw6kfir7.execute-api.us-east-1.amazonaws.com/dev/api/devices/valid-id",
+					"protocol": "https",
+					"host": [
+						"otbw6kfir7",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"api",
+						"devices",
+						"valid-id"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

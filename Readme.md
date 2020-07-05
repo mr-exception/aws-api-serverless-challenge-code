@@ -19,3 +19,5 @@ This project is a simple rest api service in go language that uses aws lambda fu
 2. go to project root directory and exec `sls deploy`
 
 > please checkout the build and test section before deployment
+
+if you want to test apis, out of box. there are postman requests in `postman.json` that you can use them in a runner
