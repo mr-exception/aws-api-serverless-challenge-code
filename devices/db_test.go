@@ -93,8 +93,8 @@ func TestSuccessGetItemNotFound(t *testing.T) {
 	isTesting = true
 	svc := createDynamodbSession()
 	device, err := retriveDevice(svc, "invalid-id")
-	if err != nil {
-		t.Errorf("Error calling Dynamodb %d", err)
+	if err == nil || err.Error() != "notFound" {
+		t.Errorf("not found item get failed")
 	}
 
 	// fetched device have to be empty

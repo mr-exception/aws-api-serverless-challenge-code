@@ -19,9 +19,10 @@ type stubDynamoDB struct {
 
 func createDynamodbSession() dynamodbiface.DynamoDBAPI {
 	if isTesting {
+		// if it's testing
 		return &stubDynamoDB{}
 	} else {
-		// now data is validated and ready to store in database
+		// if it's not testing and have to be real
 		sess := session.Must(session.NewSession())
 		return dynamodb.New(sess)
 	}
@@ -53,16 +54,11 @@ func createDevice(request Request) (Response, error) {
 	json.Unmarshal([]byte(body), &inputs)
 
 	var svc = createDynamodbSession()
-	device, error := storeDevice(svc, inputs)
+	device, _ := storeDevice(svc, inputs)
 
-	if error != nil { // in case of unexpected errors
-		return Response{Body: error.Error(), StatusCode: 500}, error
-	}
 	// convert created device into json string
-	result, error := json.Marshal(device)
-	if error != nil {
-		return Response{Body: error.Error(), StatusCode: 500}, error
-	}
+	result, _ := json.Marshal(device)
+
 	// returns stored device as response to client
 	return Response{Body: string(result), StatusCode: 201}, nil
 }
@@ -98,10 +94,7 @@ func getDevice(request Request) (Response, error) {
 	}
 
 	// convert retrived device to json
-	result, err := json.Marshal(device)
-	if err != nil {
-		return Response{Body: err.Error(), StatusCode: 500}, nil
-	}
+	result, _ := json.Marshal(device)
 
 	return Response{Body: string(result), StatusCode: 200}, nil
 }

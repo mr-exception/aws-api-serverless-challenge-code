@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -23,15 +22,10 @@ type Device struct {
 func storeDevice(svc dynamodbiface.DynamoDBAPI, device Device) (Device, error) {
 
 	// maps the input device object into a dynamodb object
-	deviceItem, err := dynamodbattribute.MarshalMap(device)
-	if err != nil { // in case mapping failed
-		fmt.Println("Got error marshalling map:")
-		fmt.Println(err.Error())
-		return device, err
-	}
+	deviceItem, _ := dynamodbattribute.MarshalMap(device)
 
 	// write device in db and return the object
-	_, err = svc.PutItem(&dynamodb.PutItemInput{
+	_, err := svc.PutItem(&dynamodb.PutItemInput{
 		Item:      deviceItem,
 		TableName: aws.String("devices"),
 	})
@@ -44,7 +38,7 @@ func retriveDevice(svc dynamodbiface.DynamoDBAPI, id string) (Device, error) {
 	device := Device{}
 
 	// perform the query to get the requested device by id
-	result, err := svc.GetItem(&dynamodb.GetItemInput{
+	result, _ := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String("devices"),
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": { // query parameter for db -> just id
@@ -52,23 +46,14 @@ func retriveDevice(svc dynamodbiface.DynamoDBAPI, id string) (Device, error) {
 			},
 		},
 	})
-	// in case that query failed
-	if err != nil {
-		fmt.Println(err.Error())
-		return device, err
-	}
+
 	// in case if device not found
-	if _, ok := result.Item["id"]; !ok {
+	if retrivedId, ok := result.Item["id"]; !ok || *retrivedId.S == "" {
 		return device, errors.New("notFound")
 	}
 	// unmarshall the result in to a Device object
-	err = dynamodbattribute.UnmarshalMap(result.Item, &device)
+	dynamodbattribute.UnmarshalMap(result.Item, &device)
 
-	// in case of mapping error
-	if err != nil {
-		fmt.Println(err.Error())
-		return device, err
-	}
 	return device, nil
 
 }

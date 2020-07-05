@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">aascc_main/devices/actions.go (91.4%)</option>
+				
+				<option value="file1">aascc_main/devices/db.go (100.0%)</option>
+				
+				<option value="file2">aascc_main/devices/main.go (85.7%)</option>
+				
+				<option value="file3">aascc_main/devices/validation.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "encoding/json"
+        "fmt"
+
+        "github.com/aws/aws-sdk-go/aws/session"
+        "github.com/aws/aws-sdk-go/service/dynamodb"
+        "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+)
+
+// ErrorResponse struct: contains a resposne with error message
+type ErrorResponse struct {
+        Message string `json:"message"`
+}
+type stubDynamoDB struct {
+        dynamodbiface.DynamoDBAPI
+}
+
+func createDynamodbSession() dynamodbiface.DynamoDBAPI <span class="cov8" title="1">{
+        if isTesting </span><span class="cov8" title="1">{
+                // if it's testing
+                return &amp;stubDynamoDB{}
+        }</span> else<span class="cov0" title="0"> {
+                // if it's not testing and have to be real
+                sess := session.Must(session.NewSession())
+                return dynamodb.New(sess)
+        }</span>
+}
+
+// createDevice function saves a device in the database in exchange for receiving the desired inputs
+// if the id device has already been saved. Edits its information.
+// @param request Request
+// @return Response, error
+func createDevice(request Request) (Response, error) <span class="cov8" title="1">{
+        // define validation rules
+        var validationRules = make([]Rule, 1)
+        validationRules = append(validationRules, Rule{Field: "id", Message: "device should have valid id", Pattern: "exists"})
+        validationRules = append(validationRules, Rule{Field: "deviceModel", Message: "device should have valid device model", Pattern: "exists"})
+        validationRules = append(validationRules, Rule{Field: "model", Message: "device should have valid model", Pattern: "exists"})
+        validationRules = append(validationRules, Rule{Field: "name", Message: "device should have valid name", Pattern: "exists"})
+        validationRules = append(validationRules, Rule{Field: "serial", Message: "device should have valid serial", Pattern: "exists"})
+
+        // execute the validation
+        var success, response = validateRequest(request, validationRules)
+
+        if !success </span><span class="cov8" title="1">{ // validation failed
+                return response, nil
+        }</span>
+
+        // convert request body input into a raw (unsaved) device object
+        <span class="cov8" title="1">var body = request.Body
+        var inputs = Device{}
+        json.Unmarshal([]byte(body), &amp;inputs)
+
+        var svc = createDynamodbSession()
+        device, _ := storeDevice(svc, inputs)
+
+        // convert created device into json string
+        result, _ := json.Marshal(device)
+
+        // returns stored device as response to client
+        return Response{Body: string(result), StatusCode: 201}, nil</span>
+}
+
+// getDevice function retrives a device by passed id parameter in request url
+// @param request Request
+// @return Response, error
+func getDevice(request Request) (Response, error) <span class="cov8" title="1">{
+        // gets id from request parameters
+        var id = request.PathParameters["id"]
+
+        if id == "" </span><span class="cov8" title="1">{ // if client didn't passed device id
+                errorResponse := ErrorResponse{
+                        Message: fmt.Sprintf("requested endpoint not found"),
+                }
+                result, _ := json.Marshal(errorResponse)
+                return Response{Body: string(result), StatusCode: 404}, nil
+        }</span>
+
+        // retrives device from database
+        <span class="cov8" title="1">var svc = createDynamodbSession()
+        device, err := retriveDevice(svc, id)
+        if err != nil </span><span class="cov8" title="1">{
+                if err.Error() == "notFound" </span><span class="cov8" title="1">{ // when device id not found
+                        errorResponse := ErrorResponse{
+                                Message: fmt.Sprintf("device with id %s not found", id),
+                        }
+                        result, _ := json.Marshal(errorResponse)
+                        return Response{Body: string(result), StatusCode: 404}, nil
+                }</span>
+                <span class="cov0" title="0">return Response{Body: string(err.Error()), StatusCode: 500}, nil</span> // other unexpected errors
+
+        }
+
+        // convert retrived device to json
+        <span class="cov8" title="1">result, _ := json.Marshal(device)
+
+        return Response{Body: string(result), StatusCode: 200}, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "errors"
+
+        "github.com/aws/aws-sdk-go/aws"
+        "github.com/aws/aws-sdk-go/service/dynamodb"
+        "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+        "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+)
+
+// Device struct: containing a device fields
+type Device struct {
+        ID          string `json:"id"`
+        DeviceModel string `json:"deviceModel"`
+        Name        string `json:"name"`
+        Model       string `json:"model"`
+        Serial      string `json:"serial"`
+}
+
+// storeDevice writes a new device in table
+func storeDevice(svc dynamodbiface.DynamoDBAPI, device Device) (Device, error) <span class="cov8" title="1">{
+
+        // maps the input device object into a dynamodb object
+        deviceItem, _ := dynamodbattribute.MarshalMap(device)
+
+        // write device in db and return the object
+        _, err := svc.PutItem(&amp;dynamodb.PutItemInput{
+                Item:      deviceItem,
+                TableName: aws.String("devices"),
+        })
+        return device, err
+
+}</span>
+
+// retriveDevice writes a new device in table
+func retriveDevice(svc dynamodbiface.DynamoDBAPI, id string) (Device, error) <span class="cov8" title="1">{
+        device := Device{}
+
+        // perform the query to get the requested device by id
+        result, _ := svc.GetItem(&amp;dynamodb.GetItemInput{
+                TableName: aws.String("devices"),
+                Key: map[string]*dynamodb.AttributeValue{
+                        "id": { // query parameter for db -&gt; just id
+                                S: aws.String(id),
+                        },
+                },
+        })
+
+        // in case if device not found
+        if retrivedId, ok := result.Item["id"]; !ok || *retrivedId.S == "" </span><span class="cov8" title="1">{
+                return device, errors.New("notFound")
+        }</span>
+        // unmarshall the result in to a Device object
+        <span class="cov8" title="1">dynamodbattribute.UnmarshalMap(result.Item, &amp;device)
+
+        return device, nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+import (
+        "github.com/aws/aws-lambda-go/events"
+        "github.com/aws/aws-lambda-go/lambda"
+)
+
+var isTesting bool = false
+
+// Response type alias from aws events
+type Response events.APIGatewayProxyResponse
+
+// Request type alias from aws events
+type Request events.APIGatewayProxyRequest
+
+// Handler is our lambda handler invoked by the `lambda.Start` function call
+func Handler(request Request) (Response, error) <span class="cov8" title="1">{
+        var response = Response{Body: "request endpoint not found", StatusCode: 404}
+        if request.HTTPMethod == "GET" </span><span class="cov8" title="1">{ // so request is for getDevice function
+                return getDevice(request)
+        }</span>
+        <span class="cov8" title="1">if request.HTTPMethod == "POST" </span><span class="cov8" title="1">{ // so request is for createDevice function
+                return createDevice(request)
+        }</span>
+        <span class="cov8" title="1">return response, nil</span>
+}
+
+// main function of project
+func main() <span class="cov0" title="0">{
+        lambda.Start(Handler)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package main
+
+import (
+        "encoding/json"
+)
+
+// Rule is a single validation rule defined for a parameter
+type Rule struct {
+        Field   string // field name
+        Pattern string // validation function (isEmpty, exists)
+        Message string // validation message is case of failure
+}
+
+// validateRequest validates the input data received from Request
+// @param Request
+// @param []Rule
+// @return bool (validation passed) and Response (error response, in case of validation failure)
+func validateRequest(request Request, rules []Rule) (bool, Response) <span class="cov8" title="1">{
+        var inputs map[string]string
+        json.Unmarshal([]byte(request.Body), &amp;inputs)
+
+        // validate inputs
+        var success, message = validateInput(inputs, rules)
+
+        if !success </span><span class="cov8" title="1">{ // in case of validation failure, returns the failure message
+                errorResponse := ErrorResponse{
+                        Message: message,
+                }
+                result, _ := json.Marshal(errorResponse)
+                return false, Response{Body: string(result), StatusCode: 400}
+        }</span>
+        // in case of validate success returns an empty message
+        <span class="cov8" title="1">return true, Response{}</span>
+}
+
+// ValidateInput validates an input map object with given rules
+// @param inputs map[sting]string
+// @param rules []Rule
+// @return bool (success or failure in validation) , string (validation failure message)
+func validateInput(inputs map[string]string, rules []Rule) (bool, string) <span class="cov8" title="1">{
+        for _, rule := range rules </span><span class="cov8" title="1">{ // execute validation rules of input fields
+                switch rule.Pattern </span>{
+                case "isEmpty":<span class="cov8" title="1"> // field have to be empty|nil
+                        if inputs[rule.Field] != "" </span><span class="cov8" title="1">{
+                                return false, rule.Message
+                        }</span>
+                        <span class="cov8" title="1">break</span>
+                case "exists":<span class="cov8" title="1"> // file have to be a valid string|int
+                        if inputs[rule.Field] == "" </span><span class="cov8" title="1">{
+                                return false, rule.Message
+                        }</span>
+                        <span class="cov8" title="1">break</span>
+                }
+        }
+        <span class="cov8" title="1">return true, ""</span> // validation was successful
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

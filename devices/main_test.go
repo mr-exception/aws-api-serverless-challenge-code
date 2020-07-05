@@ -119,11 +119,52 @@ func TestCreateSuccess(t *testing.T) {
 	}
 }
 
+func TestGetFailure0(t *testing.T) {
+	isTesting = true
+
+	var params = make(map[string]string)
+	params["id"] = "invalid-id"
+
+	var request = Request{
+		Path:           "/api/devices",
+		PathParameters: params,
+		HTTPMethod:     "GET",
+	}
+	var response, _ = Handler(request)
+
+	if response.StatusCode != 404 {
+		t.Errorf("response status code has to be 404 but is %d", response.StatusCode)
+	}
+}
+
+func TestGetFailure1(t *testing.T) {
+	isTesting = true
+
+	var params = make(map[string]string)
+	params["id"] = ""
+
+	var request = Request{
+		Path:           "/api/devices",
+		PathParameters: params,
+		HTTPMethod:     "GET",
+	}
+	var response, _ = Handler(request)
+
+	if response.StatusCode != 404 {
+		t.Errorf("response status code has to be 404 but is %d", response.StatusCode)
+	}
+}
+
 func TestGetSuccess(t *testing.T) {
 	isTesting = true
+
+	var params = make(map[string]string)
+	params["id"] = "valid-id"
+
 	var request = Request{
-		Path:       "/api/devices/valid-id",
-		HTTPMethod: "GET",
+		Path:           "/api/devices",
+		PathParameters: params,
+		HTTPMethod:     "GET",
 	}
 	var response, _ = Handler(request)
 	if response.StatusCode != 200 {
@@ -131,14 +172,32 @@ func TestGetSuccess(t *testing.T) {
 	}
 }
 
-func TestGetFailure(t *testing.T) {
+func TestFailedEndpoint0(t *testing.T) {
 	isTesting = true
 	var request = Request{
-		Path:       "/api/devices/invalid-id",
-		HTTPMethod: "GET",
+		Path:       "/api/devices",
+		HTTPMethod: "PUT",
 	}
 	var response, _ = Handler(request)
 	if response.StatusCode != 404 {
 		t.Errorf("response status code has to be 404 but is %d", response.StatusCode)
+	}
+	if response.Body != `{"message":"requested endpoint not found"}` {
+		t.Errorf("body is: %s", response.Body)
+	}
+}
+
+func TestFailedEndpoint1(t *testing.T) {
+	isTesting = true
+	var request = Request{
+		Path:       "/api/devices",
+		HTTPMethod: "PUT",
+	}
+	var response, _ = Handler(request)
+	if response.StatusCode != 404 {
+		t.Errorf("response status code has to be 404 but is %d", response.StatusCode)
+	}
+	if response.Body != `{"message":"requested endpoint not found"}` {
+		t.Errorf("body is: %s", response.Body)
 	}
 }
