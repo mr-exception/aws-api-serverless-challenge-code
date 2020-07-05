@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// TestCreateValidationFail0 fails because of validation
 func TestCreateValidationFail0(t *testing.T) {
 	isTesting = true
 	var request = Request{
@@ -22,6 +23,7 @@ func TestCreateValidationFail0(t *testing.T) {
 	}
 }
 
+// TestCreateValidationFail1 fails because of validation
 func TestCreateValidationFail1(t *testing.T) {
 	isTesting = true
 	var request = Request{
@@ -40,6 +42,7 @@ func TestCreateValidationFail1(t *testing.T) {
 	}
 }
 
+// TestCreateValidationFail2 fails because of validation
 func TestCreateValidationFail2(t *testing.T) {
 	isTesting = true
 	var request = Request{
@@ -59,6 +62,7 @@ func TestCreateValidationFail2(t *testing.T) {
 	}
 }
 
+// TestCreateValidationFail3 fails because of validation
 func TestCreateValidationFail3(t *testing.T) {
 	isTesting = true
 	var request = Request{
@@ -79,6 +83,7 @@ func TestCreateValidationFail3(t *testing.T) {
 	}
 }
 
+// TestCreateValidationFail4 fails because of validation
 func TestCreateValidationFail4(t *testing.T) {
 	isTesting = true
 	var request = Request{
@@ -100,6 +105,7 @@ func TestCreateValidationFail4(t *testing.T) {
 	}
 }
 
+// TestCreateSuccess successful device creation
 func TestCreateSuccess(t *testing.T) {
 	isTesting = true
 	var request = Request{
@@ -119,6 +125,7 @@ func TestCreateSuccess(t *testing.T) {
 	}
 }
 
+// TestGetFailure0 fails because id does not exists
 func TestGetFailure0(t *testing.T) {
 	isTesting = true
 
@@ -137,6 +144,7 @@ func TestGetFailure0(t *testing.T) {
 	}
 }
 
+// TestGetFailure1 fails because id param is empty
 func TestGetFailure1(t *testing.T) {
 	isTesting = true
 
@@ -155,6 +163,7 @@ func TestGetFailure1(t *testing.T) {
 	}
 }
 
+// TestGetSuccess success device get
 func TestGetSuccess(t *testing.T) {
 	isTesting = true
 
@@ -172,6 +181,7 @@ func TestGetSuccess(t *testing.T) {
 	}
 }
 
+// TestFailedEndpoint0 fails because verb is not defined
 func TestFailedEndpoint0(t *testing.T) {
 	isTesting = true
 	var request = Request{
@@ -187,11 +197,12 @@ func TestFailedEndpoint0(t *testing.T) {
 	}
 }
 
+// TestFailedEndpoint1 fails because endpoint missmatches
 func TestFailedEndpoint1(t *testing.T) {
 	isTesting = true
 	var request = Request{
-		Path:       "/api/devices",
-		HTTPMethod: "PUT",
+		Path:       "/api/device",
+		HTTPMethod: "GET",
 	}
 	var response, _ = Handler(request)
 	if response.StatusCode != 404 {
