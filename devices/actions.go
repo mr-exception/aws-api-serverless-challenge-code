@@ -15,51 +15,24 @@ type ErrorResponse struct {
 // @param request Request
 // @return Response, error
 func createDevice(request Request) (Response, error) {
+	// define validation rules
+	var validationRules []Rule
+	validationRules[0] = Rule{Field: "id", Message: "device should have valid id", Pattern: "exists"}
+	validationRules[1] = Rule{Field: "deviceModel", Message: "device should have valid device model", Pattern: "exists"}
+	validationRules[2] = Rule{Field: "model", Message: "device should have valid model", Pattern: "exists"}
+	validationRules[3] = Rule{Field: "name", Message: "device should have valid name", Pattern: "exists"}
+	validationRules[4] = Rule{Field: "serial", Message: "device should have valid serial", Pattern: "exists"}
+
+	// execute the validation
+	var success, response = validateRequest(request, validationRules)
+
+	if !success {
+		return response, nil
+	}
+
 	var body = request.Body
 	var inputs = Device{}
 	json.Unmarshal([]byte(body), &inputs)
-
-	// validate the request data
-	if inputs.ID == "" { // validation of id
-		errorResponse := ErrorResponse{
-			Message: "device should have a valid id",
-		}
-		result, _ := json.Marshal(errorResponse)
-		return Response{Body: string(result), StatusCode: 400}, nil
-	}
-
-	if inputs.DeviceModel == "" { // validation of device model
-		errorResponse := ErrorResponse{
-			Message: "device should have a valid device model",
-		}
-		result, _ := json.Marshal(errorResponse)
-		return Response{Body: string(result), StatusCode: 400}, nil
-	}
-
-	if inputs.Model == "" { // validation of model
-		errorResponse := ErrorResponse{
-			Message: "device should have a valid model",
-		}
-		result, _ := json.Marshal(errorResponse)
-		return Response{Body: string(result), StatusCode: 400}, nil
-	}
-
-	if inputs.Name == "" { // validation of name
-		errorResponse := ErrorResponse{
-			Message: "device should have a valid name",
-		}
-		result, _ := json.Marshal(errorResponse)
-		return Response{Body: string(result), StatusCode: 400}, nil
-	}
-
-	if inputs.Serial == "" { // validation of serial
-		errorResponse := ErrorResponse{
-			Message: "device should have a valid serial",
-		}
-		result, _ := json.Marshal(errorResponse)
-		return Response{Body: string(result), StatusCode: 400}, nil
-	}
-
 	// now data is validated and ready to store in database
 	device, error := storeDevice(inputs)
 
