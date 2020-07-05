@@ -29,10 +29,11 @@ func createDevice(request Request) (Response, error) {
 	// execute the validation
 	var success, response = validateRequest(request, validationRules)
 
-	if !success {
+	if !success { // validation failed
 		return response, nil
 	}
 
+	// convert request body input into a raw (unsaved) device object
 	var body = request.Body
 	var inputs = Device{}
 	json.Unmarshal([]byte(body), &inputs)
@@ -50,7 +51,7 @@ func createDevice(request Request) (Response, error) {
 	if error != nil {
 		return Response{Body: error.Error(), StatusCode: 500}, error
 	}
-
+	// returns stored device as response to client
 	return Response{Body: string(result), StatusCode: 201}, nil
 }
 
@@ -61,7 +62,7 @@ func getDevice(request Request) (Response, error) {
 	// gets id from request parameters
 	var id = request.PathParameters["id"]
 
-	if id == "" {
+	if id == "" { // if client didn't passed device id
 		errorResponse := ErrorResponse{
 			Message: fmt.Sprintf("requested endpoint not found"),
 		}
@@ -91,5 +92,5 @@ func getDevice(request Request) (Response, error) {
 		return Response{Body: err.Error(), StatusCode: 500}, nil
 	}
 
-	return Response{Body: string(result), StatusCode: 201}, nil
+	return Response{Body: string(result), StatusCode: 200}, nil
 }

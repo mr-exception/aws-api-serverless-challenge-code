@@ -33,6 +33,10 @@ func validateRequest(request Request, rules []Rule) (bool, Response) {
 	return true, Response{}
 }
 
+// ValidateInput validates an input map object with given rules
+// @param inputs map[sting]string
+// @param rules []Rule
+// @return bool (success or failure in validation) , string (validation failure message)
 func validateInput(inputs map[string]string, rules []Rule) (bool, string) {
 	for _, rule := range rules { // execute validation rules of input fields
 		switch rule.Pattern {
@@ -48,5 +52,5 @@ func validateInput(inputs map[string]string, rules []Rule) (bool, string) {
 			break
 		}
 	}
-	return true, ""
+	return true, "" // validation was successful
 }

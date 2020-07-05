@@ -8,15 +8,14 @@ This project is a simple rest api service in go language that uses aws lambda fu
 2. run `install.sh` to install all required packages.
 3. exec `make build` to build files into `/bin` directory of project
 
+## how to test
+
+1. go to `/devices` directory
+2. exec `go test` to run unit test
+
 ## deploy to aws
 
 1. check serverless configuration for aws credentials
 2. go to project root directory and exec `sls deploy`
 
-> please checkout the test section before deployment
-
-
-## how to test
-
-1. go to `/devices` directory
-2. exec `go test` to run unit test
+> please checkout the build and test section before deployment
