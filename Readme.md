@@ -15,3 +15,6 @@ This project is a simple rest api service in go language that uses aws lambda fu
 
 
 ## how to test
+
+1. go to `/devices` directory
+2. exec `go test` to run unit test

@@ -53,6 +53,8 @@ func TestSuccessGetItemFound(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error: calling Dynamodb %d", err)
 	}
+
+	// fetched device is not empty
 	if device.ID == "" || device.Name == "" || device.Model == "" || device.DeviceModel == "" || device.Serial == "" {
 		t.Errorf("Error: device not found")
 	}
@@ -65,6 +67,8 @@ func TestSuccessGetItemNotFound(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error calling Dynamodb %d", err)
 	}
+
+	// fetched device have to be empty
 	if device.ID != "" {
 		t.Errorf("Error in fetch device")
 	}
