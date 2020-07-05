@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 )
 
 // Device struct: containing a device fields
@@ -43,13 +44,10 @@ func storeDevice(device Device) (Device, error) {
 }
 
 // retriveDevice writes a new device in table
-func retriveDevice(id string) (Device, error) {
-	sess := session.Must(session.NewSession())
-	svc := dynamodb.New(sess)
+func retriveDevice(svc dynamodbiface.DynamoDBAPI, id string) (Device, error) {
 	device := Device{}
 
 	// perform the query to get the requested device by id
-	fmt.Println("Trying to read from table: ", "devices")
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String("devices"),
 		Key: map[string]*dynamodb.AttributeValue{

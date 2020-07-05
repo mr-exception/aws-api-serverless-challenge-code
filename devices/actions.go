@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
 // ErrorResponse struct: contains a resposne with error message
@@ -64,7 +67,9 @@ func getDevice(request Request) (Response, error) {
 	}
 
 	// retrives device from database
-	device, err := retriveDevice(id)
+	sess := session.Must(session.NewSession())
+	svc := dynamodb.New(sess)
+	device, err := retriveDevice(svc, id)
 	if err != nil {
 		if err.Error() == "notFound" { // when device id not found
 			errorResponse := ErrorResponse{
