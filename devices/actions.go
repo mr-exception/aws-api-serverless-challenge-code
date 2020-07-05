@@ -6,11 +6,25 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 )
 
 // ErrorResponse struct: contains a resposne with error message
 type ErrorResponse struct {
 	Message string `json:"message"`
+}
+type stubDynamoDB struct {
+	dynamodbiface.DynamoDBAPI
+}
+
+func createDynamodbSession() dynamodbiface.DynamoDBAPI {
+	if isTesting {
+		return &stubDynamoDB{}
+	} else {
+		// now data is validated and ready to store in database
+		sess := session.Must(session.NewSession())
+		return dynamodb.New(sess)
+	}
 }
 
 // createDevice function saves a device in the database in exchange for receiving the desired inputs
@@ -38,9 +52,7 @@ func createDevice(request Request) (Response, error) {
 	var inputs = Device{}
 	json.Unmarshal([]byte(body), &inputs)
 
-	// now data is validated and ready to store in database
-	sess := session.Must(session.NewSession())
-	svc := dynamodb.New(sess)
+	var svc = createDynamodbSession()
 	device, error := storeDevice(svc, inputs)
 
 	if error != nil { // in case of unexpected errors
@@ -71,8 +83,7 @@ func getDevice(request Request) (Response, error) {
 	}
 
 	// retrives device from database
-	sess := session.Must(session.NewSession())
-	svc := dynamodb.New(sess)
+	var svc = createDynamodbSession()
 	device, err := retriveDevice(svc, id)
 	if err != nil {
 		if err.Error() == "notFound" { // when device id not found

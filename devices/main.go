@@ -5,6 +5,8 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+var isTesting bool = false
+
 // Response type alias from aws events
 type Response events.APIGatewayProxyResponse
 

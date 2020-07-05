@@ -4,12 +4,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 )
-
-type stubDynamoDB struct {
-	dynamodbiface.DynamoDBAPI
-}
 
 // GetItem stub for dynamodb
 func (m *stubDynamoDB) GetItem(input *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error) {
@@ -80,7 +75,8 @@ func (m *stubDynamoDB) PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutItemO
 
 // test to get an item that exists
 func TestSuccessGetItemFound(t *testing.T) {
-	svc := &stubDynamoDB{}
+	isTesting = true
+	svc := createDynamodbSession()
 	device, err := retriveDevice(svc, "valid-id")
 	if err != nil {
 		t.Errorf("Error: calling Dynamodb %d", err)
@@ -94,7 +90,8 @@ func TestSuccessGetItemFound(t *testing.T) {
 
 // test to get an item that doesnt exists
 func TestSuccessGetItemNotFound(t *testing.T) {
-	svc := &stubDynamoDB{}
+	isTesting = true
+	svc := createDynamodbSession()
 	device, err := retriveDevice(svc, "invalid-id")
 	if err != nil {
 		t.Errorf("Error calling Dynamodb %d", err)
@@ -108,7 +105,8 @@ func TestSuccessGetItemNotFound(t *testing.T) {
 
 // test to store an item
 func TestSuccessPutItemSuccess(t *testing.T) {
-	svc := &stubDynamoDB{}
+	isTesting = true
+	svc := createDynamodbSession()
 	var device = Device{
 		ID:          "valid-id",
 		Name:        "name",
